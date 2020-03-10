@@ -15,6 +15,7 @@
 
 // Include the minimal number of headers needed to support your implementation.
 // #include ...
+#include <vector>
 
 /**
  * Grid::Grid()
@@ -28,7 +29,7 @@
  *      Grid grid;
  *
  */
-
+Grid::Grid() : Grid::Grid(0) {}
 
 /**
  * Grid::Grid(square_size)
@@ -53,7 +54,7 @@
  * @param square_size
  *      The edge size to use for the width and height of the grid.
  */
-
+Grid::Grid(int square_size) : Grid::Grid(square_size, square_size) {}
 
 /**
  * Grid::Grid(width, height)
@@ -71,7 +72,10 @@
  * @param height
  *      The height of the grid.
  */
-
+Grid::Grid(int width, int height) : width(width), height(height)
+{
+    cells.assign(width * height, Cell::DEAD);
+}
 
 /**
  * Grid::get_width()
@@ -96,7 +100,10 @@
  * @return
  *      The width of the grid.
  */
-
+int Grid::get_width() const
+{
+    return width;
+}
 
 /**
  * Grid::get_height()
@@ -121,7 +128,10 @@
  * @return
  *      The height of the grid.
  */
-
+int Grid::get_height() const
+{
+    return height;
+}
 
 /**
  * Grid::get_total_cells()
@@ -146,7 +156,10 @@
  * @return
  *      The number of total cells.
  */
-
+int Grid::get_total_cells() const
+{ 
+    return width * height;
+}
 
 /**
  * Grid::get_alive_cells()
@@ -171,7 +184,20 @@
  * @return
  *      The number of alive cells.
  */
+int Grid::get_alive_cells() const
+{ 
+    int aliveCellCount = 0;
+    
+    for (int i = 0; i < width - 1; i++)
+    {
+        if (cells[i] == Cell::ALIVE)
+        {
+            aliveCellCount++;
+        }
+    }
 
+    return aliveCellCount;
+}
 
 /**
  * Grid::get_dead_cells()
@@ -196,7 +222,10 @@
  * @return
  *      The number of dead cells.
  */
-
+int Grid::get_dead_cells() const
+{
+    return get_total_cells() - get_alive_cells();
+}
 
 /**
  * Grid::resize(square_size)

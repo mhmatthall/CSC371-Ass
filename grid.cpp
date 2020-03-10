@@ -244,7 +244,10 @@ int Grid::get_dead_cells() const
  * @param square_size
  *      The new edge size for both the width and height of the grid.
  */
-
+void Grid::resize(int square_size)
+{
+    Grid::resize(square_size, square_size);
+}
 
 /**
  * Grid::resize(width, height)
@@ -266,7 +269,12 @@ int Grid::get_dead_cells() const
  * @param new_height
  *      The new height for the grid.
  */
-
+void Grid::resize(int new_width, int new_height)
+{
+    width = new_width;
+    height = new_height;
+    cells.resize(new_width * new_height, Cell::DEAD);
+}
 
 /**
  * Grid::get_index(x, y)

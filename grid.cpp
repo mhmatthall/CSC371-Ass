@@ -72,10 +72,7 @@ Grid::Grid(int square_size) : Grid::Grid(square_size, square_size) {}
  * @param height
  *      The height of the grid.
  */
-Grid::Grid(int width, int height) : width(width), height(height)
-{
-    cells.assign(width * height, Cell::DEAD);
-}
+Grid::Grid(int width, int height) : width(width), height(height), cells(width * height, Cell::DEAD) {}
 
 /**
  * Grid::get_width()
@@ -157,7 +154,7 @@ int Grid::get_height() const
  *      The number of total cells.
  */
 int Grid::get_total_cells() const
-{ 
+{
     return width * height;
 }
 
@@ -185,10 +182,10 @@ int Grid::get_total_cells() const
  *      The number of alive cells.
  */
 int Grid::get_alive_cells() const
-{ 
+{
     int aliveCellCount = 0;
-    
-    for (int i = 0; i < width - 1; i++)
+
+    for (int i = 0; i < get_total_cells(); i++)
     {
         if (cells[i] == Cell::ALIVE)
         {
@@ -224,7 +221,17 @@ int Grid::get_alive_cells() const
  */
 int Grid::get_dead_cells() const
 {
-    return get_total_cells() - get_alive_cells();
+    int deadCellCount = 0;
+
+    for (int i = 0; i < get_total_cells(); i++)
+    {
+        if (cells[i] == Cell::DEAD)
+        {
+            deadCellCount++;
+        }
+    }
+
+    return deadCellCount;
 }
 
 /**
@@ -328,7 +335,6 @@ void Grid::resize(int new_width, int new_height)
  * Grid::set(x, y, value)
  *
  * Overwrites the value at the desired coordinate.
- * The function should be callable from a constant context.
  * Should be implemented by invoking Grid::operator()(x, y).
  *
  * @example
@@ -457,7 +463,6 @@ void Grid::resize(int new_width, int new_height)
  *      or if the crop window has a negative size.
  */
 
-
 /**
  * Grid::merge(other, x0, y0, alive_only = false)
  *
@@ -496,7 +501,6 @@ void Grid::resize(int new_width, int new_height)
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
 
-
 /**
  * Grid::rotate(rotation)
  *
@@ -519,7 +523,6 @@ void Grid::resize(int new_width, int new_height)
  * @return
  *      Returns a copy of the grid that has been rotated.
  */
-
 
 /**
  * operator<<(output_stream, grid)
@@ -556,4 +559,3 @@ void Grid::resize(int new_width, int new_height)
  * @return
  *      Returns a reference to the output stream to enable operator chaining.
  */
-

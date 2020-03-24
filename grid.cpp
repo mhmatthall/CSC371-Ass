@@ -15,6 +15,7 @@
 
 // Include the minimal number of headers needed to support your implementation.
 // #include ...
+#include <cmath>
 #include <vector>
 
 /**
@@ -278,9 +279,86 @@ void Grid::resize(int square_size)
  */
 void Grid::resize(int new_width, int new_height)
 {
-    width = new_width;
-    height = new_height;
-    cells.resize(new_width * new_height, Cell::DEAD);
+    // Sanity check; skip everything if no values change
+    if (new_width != width || new_height != height)
+    {
+        // When adding both rows and columns
+        if (new_width > width && new_height > height)
+        {
+            std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
+            
+            int y, newIndex = 0;
+
+            // For all cells in old grid
+            for (int i = 0; i < get_total_cells(); i++)
+            {
+                // Derive old grid's y coordinate
+                y = floor(i / width);
+
+                // Calculate new index value
+                newIndex = i + y * (new_width - width);
+
+                // Transfer cell to new grid
+                newCells[newIndex] = cells[i];
+            }
+
+            cells = newCells;
+
+        }
+        else
+        {
+            // When changing rows
+            if (new_height != height)
+            {
+                cells.resize(new_width * new_height, Cell::DEAD);
+            }
+
+            // When adding columns
+            if (new_width > width)
+            {
+                // Create replacement cell vector
+                std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
+                
+                int y = 0;
+
+                // For all cells in new grid
+                for (int i = 0; i < (new_width * new_height); i++)
+                {
+                    // Derive old grid's y coordinate
+                    y = floor(i / new_width);
+
+                    // Transfer cell to new grid
+                    newCells[i] = cells[i - y];
+                }
+
+                cells = newCells;
+            }
+
+            // When removing columns
+            if (new_width < width)
+            {
+                // Create replacement cell vector
+                std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
+
+                int y = 0;
+
+                // For all cells in new grid
+                for (int i = 0; i < (new_width * new_height); i++)
+                {
+                    // Derive old grid's y-coordinate
+                    y = floor(i / new_width);
+
+                    // Transfer cell to new grid
+                    newCells[i] = cells[i - y * (new_width - width)];
+                }
+
+                cells = newCells;
+            }
+        }
+
+        width = new_width;
+        height = new_height;
+    }
 }
 
 /**

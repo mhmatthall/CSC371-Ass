@@ -377,7 +377,10 @@ void Grid::resize(int new_width, int new_height)
  * @return
  *      The 1d offset from the start of the data array where the desired cell is located.
  */
-
+int Grid::get_index(int x, int y) const
+{
+    return x + (y * width);
+}
 
 /**
  * Grid::get(x, y)
@@ -407,7 +410,10 @@ void Grid::resize(int new_width, int new_height)
  * @throws
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
-
+Cell Grid::get(int x, int y) const
+{
+    return operator()(x, y);
+}
 
 /**
  * Grid::set(x, y, value)
@@ -435,7 +441,11 @@ void Grid::resize(int new_width, int new_height)
  * @throws
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
-
+void Grid::set(int x, int y, Cell value)
+{
+    Cell& currentCell = operator()(x, y);
+    currentCell = value;
+}
 
 /**
  * Grid::operator()(x, y)
@@ -472,7 +482,10 @@ void Grid::resize(int new_width, int new_height)
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-
+Cell& Grid::operator()(int x, int y)
+{
+    return cells[get_index(x, y)];
+}
 
 /**
  * Grid::operator()(x, y)
@@ -504,7 +517,10 @@ void Grid::resize(int new_width, int new_height)
  * @throws
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
-
+const Cell& Grid::operator()(int x, int y) const
+{
+    return cells[get_index(x, y)];
+}
 
 /**
  * Grid::crop(x0, y0, x1, y1)

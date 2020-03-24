@@ -34,6 +34,8 @@ class Grid {
         int height;
         std::vector<Cell> cells;    // 1D cell array
 
+        int get_index(int x, int y) const;
+
     public:
         Grid();
         explicit Grid(int square_size);
@@ -47,4 +49,11 @@ class Grid {
 
         void resize(int square_size);
         void resize(int new_width, int new_height);
+
+        Cell& operator()(int x, int y);
+        const Cell& operator()(int x, int y) const;
+
+        Cell get(int x, int y) const;
+        void set(int x, int y, const Cell value);
+        
 };

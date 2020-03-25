@@ -578,7 +578,7 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) const
  * Grid::merge(other, x0, y0, alive_only = false)
  *
  * Merge two grids together by overlaying the other on the current grid at the desired location.
- * By default merging overwrites all cells within the merge reason to be the value from the other grid.
+ * By default merging overwrites all cells within the merge region to be the value from the other grid.
  *
  * Conditionally if alive_only = true perform the merge such that only alive cells are updated.
  *      - If a cell is originally dead it can be updated to be alive from the merge.

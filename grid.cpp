@@ -556,6 +556,23 @@ const Cell& Grid::operator()(int x, int y) const
  *      std::exception or sub-class if x0,y0 or x1,y1 are not valid coordinates within the grid
  *      or if the crop window has a negative size.
  */
+Grid Grid::crop(int x0, int y0, int x1, int y1) const
+{
+    // Construct new grid of size dx * dy
+    Grid newGrid(x1 - x0, y1 - y0);
+
+    // Iterate through new grid and fill values
+    for (int y = 0; y < newGrid.get_height(); y++)
+    {
+        for (int x = 0; x < newGrid.get_width(); x++)
+        {
+            newGrid.set(x, y, get(x + x0, y + y0));
+        }
+        
+    }
+
+    return newGrid;
+}
 
 /**
  * Grid::merge(other, x0, y0, alive_only = false)

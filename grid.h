@@ -55,5 +55,6 @@ class Grid {
 
         Cell get(int x, int y) const;
         void set(int x, int y, const Cell value);
-        
+
+        Grid crop(int x0, int y0, int x1, int y1) const;
 };

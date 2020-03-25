@@ -282,8 +282,11 @@ void Grid::resize(int new_width, int new_height)
     // Sanity check; skip everything if no values change
     if (new_width != width || new_height != height)
     {
-        // When adding both rows and columns
-        if (new_width > width && new_height > height)
+        if (get_total_cells() == 0) // If grid is only default constructed
+        {
+            cells.resize(new_width * new_height, Cell::DEAD);
+        }
+        else if (new_width > width && new_height > height)  // When adding both rows and columns
         {
             std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
             

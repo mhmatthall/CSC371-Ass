@@ -57,4 +57,5 @@ class Grid {
         void set(int x, int y, const Cell value);
 
         Grid crop(int x0, int y0, int x1, int y1) const;
+        void merge(Grid other, int x0, int y0, bool alive_only = false);
 };

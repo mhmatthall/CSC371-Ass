@@ -13,11 +13,6 @@
  */
 #include "grid.h"
 
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
-#include <cmath>
-#include <vector>
-
 /**
  * Grid::Grid()
  *
@@ -184,17 +179,17 @@ int Grid::get_total_cells() const
  */
 int Grid::get_alive_cells() const
 {
-    int aliveCellCount = 0;
+    int count = 0;
 
     for (int i = 0; i < get_total_cells(); i++)
     {
         if (cells[i] == Cell::ALIVE)
         {
-            aliveCellCount++;
+            count++;
         }
     }
 
-    return aliveCellCount;
+    return count;
 }
 
 /**
@@ -222,17 +217,17 @@ int Grid::get_alive_cells() const
  */
 int Grid::get_dead_cells() const
 {
-    int deadCellCount = 0;
+    int count = 0;
 
     for (int i = 0; i < get_total_cells(); i++)
     {
         if (cells[i] == Cell::DEAD)
         {
-            deadCellCount++;
+            count++;
         }
     }
 
-    return deadCellCount;
+    return count;
 }
 
 /**
@@ -286,11 +281,11 @@ void Grid::resize(int new_width, int new_height)
         {
             cells.resize(new_width * new_height, Cell::DEAD);
         }
-        else if (new_width > width && new_height > height)  // When adding both rows and columns
+        else if (new_width > width && new_height > height) // When adding both rows and columns
         {
-            std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
-            
-            int y, newIndex = 0;
+            std::vector<Cell> new_cells(new_width * new_height, Cell::DEAD);
+
+            int y, new_index = 0;
 
             // For all cells in old grid
             for (int i = 0; i < get_total_cells(); i++)
@@ -299,14 +294,13 @@ void Grid::resize(int new_width, int new_height)
                 y = floor(i / width);
 
                 // Calculate new index value
-                newIndex = i + y * (new_width - width);
+                new_index = i + y * (new_width - width);
 
                 // Transfer cell to new grid
-                newCells[newIndex] = cells[i];
+                new_cells[new_index] = cells[i];
             }
 
-            cells = newCells;
-
+            cells = new_cells;
         }
         else
         {
@@ -320,8 +314,8 @@ void Grid::resize(int new_width, int new_height)
             if (new_width > width)
             {
                 // Create replacement cell vector
-                std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
-                
+                std::vector<Cell> new_cells(new_width * new_height, Cell::DEAD);
+
                 int y = 0;
 
                 // For all cells in new grid
@@ -331,17 +325,17 @@ void Grid::resize(int new_width, int new_height)
                     y = floor(i / new_width);
 
                     // Transfer cell to new grid
-                    newCells[i] = cells[i - y];
+                    new_cells[i] = cells[i - y];
                 }
 
-                cells = newCells;
+                cells = new_cells;
             }
 
             // When removing columns
             if (new_width < width)
             {
                 // Create replacement cell vector
-                std::vector<Cell> newCells(new_width * new_height, Cell::DEAD);
+                std::vector<Cell> new_cells(new_width * new_height, Cell::DEAD);
 
                 int y = 0;
 
@@ -352,10 +346,10 @@ void Grid::resize(int new_width, int new_height)
                     y = floor(i / new_width);
 
                     // Transfer cell to new grid
-                    newCells[i] = cells[i - y * (new_width - width)];
+                    new_cells[i] = cells[i - y * (new_width - width)];
                 }
 
-                cells = newCells;
+                cells = new_cells;
             }
         }
 
@@ -446,8 +440,8 @@ Cell Grid::get(int x, int y) const
  */
 void Grid::set(int x, int y, Cell value)
 {
-    Cell& currentCell = operator()(x, y);
-    currentCell = value;
+    Cell &current_cell = operator()(x, y);
+    current_cell = value;
 }
 
 /**
@@ -485,7 +479,7 @@ void Grid::set(int x, int y, Cell value)
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-Cell& Grid::operator()(int x, int y)
+Cell &Grid::operator()(int x, int y)
 {
     return cells[get_index(x, y)];
 }
@@ -520,7 +514,7 @@ Cell& Grid::operator()(int x, int y)
  * @throws
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
-const Cell& Grid::operator()(int x, int y) const
+const Cell &Grid::operator()(int x, int y) const
 {
     return cells[get_index(x, y)];
 }
@@ -562,19 +556,18 @@ const Cell& Grid::operator()(int x, int y) const
 Grid Grid::crop(int x0, int y0, int x1, int y1) const
 {
     // Construct new grid of size dx * dy
-    Grid newGrid(x1 - x0, y1 - y0);
+    Grid new_grid(x1 - x0, y1 - y0);
 
     // Iterate through new grid and fill values
-    for (int y = 0; y < newGrid.get_height(); y++)
+    for (int y = 0; y < new_grid.get_height(); y++)
     {
-        for (int x = 0; x < newGrid.get_width(); x++)
+        for (int x = 0; x < new_grid.get_width(); x++)
         {
-            newGrid.set(x, y, get(x + x0, y + y0));
+            new_grid.set(x, y, get(x + x0, y + y0));
         }
-        
     }
 
-    return newGrid;
+    return new_grid;
 }
 
 /**
@@ -614,7 +607,7 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) const
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
-void Grid::merge(Grid other, int x0, int y0, bool alive_only)
+void Grid::merge(Grid &other, int x0, int y0, bool alive_only)
 {
     // Iterate through new grid
     for (int y = 0; y < other.get_height(); y++)

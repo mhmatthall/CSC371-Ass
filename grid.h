@@ -10,8 +10,6 @@
  */
 #pragma once
 
-// Add the minimal number of includes you need in order to declare the class.
-// #include ...
 #include <cmath>
 #include <sstream>
 #include <vector>
@@ -19,22 +17,21 @@
 /**
  * A Cell is a char limited to two named values for Cell::DEAD and Cell::ALIVE.
  */
-enum Cell : char {
-    DEAD  = ' ',
+enum Cell : char
+{
+    DEAD = ' ',
     ALIVE = '#'
 };
 
 /**
  * Declare the structure of the Grid class for representing a 2d grid of cells.
  */
-class Grid {
-    // How to draw an owl:
-    //      Step 1. Draw a circle.
-    //      Step 2. Draw the rest of the owl.
+class Grid
+{
     private:
         int width;
         int height;
-        std::vector<Cell> cells;    // 1D cell array
+        std::vector<Cell> cells; // 1D cell array
 
         int get_index(int x, int y) const;
 
@@ -56,14 +53,14 @@ class Grid {
         void resize(int square_size);
         void resize(int new_width, int new_height);
 
-        Cell& operator()(int x, int y);
-        const Cell& operator()(int x, int y) const;
+        Cell &operator()(int x, int y);
+        const Cell &operator()(int x, int y) const;
 
         Cell get(int x, int y) const;
         void set(int x, int y, const Cell value);
 
         Grid crop(int x0, int y0, int x1, int y1) const;
-        void merge(Grid other, int x0, int y0, bool alive_only = false);
+        void merge(Grid &other, int x0, int y0, bool alive_only = false);
         Grid rotate(int rotation) const;
 
         friend std::ostream &operator<<(std::ostream &output_stream, const Grid &grid);

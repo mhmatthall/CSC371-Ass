@@ -661,6 +661,157 @@ void Grid::merge(Grid other, int x0, int y0, bool alive_only)
  * @return
  *      Returns a copy of the grid that has been rotated.
  */
+Grid Grid::rotate(int _rotation) const
+{
+    // Normalise rotation amount to range [0, 3]
+    int rotation = _rotation % 4;
+
+    // Correct negative results to fix C++'s silly modulus
+    if (rotation < 0)
+    {
+        rotation += 4;
+    }
+
+    // Copy the current grid
+    Grid new_grid(*this);
+
+    if (rotation == 1)
+    {
+        // 90 degree rotation:
+        //   Equivalent to a coordinate swap and vertical flip
+        return x_flip(swap_coordinates(new_grid));
+    }
+    else if (rotation == 2)
+    {
+        // 180 degree rotation:
+        //   Equivalent to a vertical and horizontal flip
+        return x_flip(y_flip(new_grid));
+    }
+    else if (rotation == 3)
+    {
+        // 270 degree rotation:
+        //   Equivalent to a coordinate swap and horizontal flip
+        return y_flip(swap_coordinates(new_grid));
+    }
+    else
+    {
+        // 0 degree rotation:
+        //   Equivalent to the grid as-is
+        return new_grid;
+    }
+}
+
+/**
+ * Grid::x_flip(old_grid)
+ *
+ * Private helper function which returns a copy of the grid flipped along the
+ * x-axis (vertical reflection).
+ *
+ * @param old_grid
+ *      The grid to be transformed.
+ *
+ * @return
+ *      A copy of the grid reflected along the x-axis.
+ */
+Grid Grid::x_flip(const Grid &old_grid) const
+{
+    if (old_grid.get_width() == 1)
+    {
+        // Do nothing if only one column
+        return old_grid;
+    }
+    else
+    {
+        int height = old_grid.get_height();
+        int width = old_grid.get_width();
+
+        Grid new_grid(width, height);
+
+        // For all cells
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                // Reverse the ordering of rows in the grid, to flip
+                new_grid(x, y) = old_grid((width - 1 - x), y);
+            }
+        }
+
+        return new_grid;
+    }
+}
+
+/**
+ * Grid::y_flip(old_grid)
+ *
+ * Private helper function which returns a copy of the grid flipped along the
+ * y-axis (horizontal reflection).
+ *
+ * @param old_grid
+ *      The grid to be transformed.
+ *
+ * @return
+ *      A copy of the grid reflected along the y-axis.
+ */
+Grid Grid::y_flip(const Grid &old_grid) const
+{
+    if (old_grid.get_height() == 1)
+    {
+        // Do nothing if only one row
+        return old_grid;
+    }
+    else
+    {
+        int height = old_grid.get_height();
+        int width = old_grid.get_width();
+
+        Grid new_grid(width, height);
+
+        // For all cells
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                // Reverse the ordering of rows in the grid, to flip
+                new_grid(x, y) = old_grid(x, (height - 1 - y));
+            }
+        }
+
+        return new_grid;
+    }
+}
+
+/**
+ * Grid::swap_coordinates(old_grid)
+ *
+ * Private helper function which returns a copy of the grid flipped along the
+ * main diagonal, by switching the position of each cell's coordinates (diagonal
+ * reflection).
+ *
+ * @param old_grid
+ *      The grid to be transformed.
+ *
+ * @return
+ *      A copy of the grid reflected along the main diagonal.
+ */
+Grid Grid::swap_coordinates(const Grid &old_grid) const
+{
+    Grid new_grid;
+
+    //Invert grid dimensions
+    new_grid.resize(old_grid.get_height(), old_grid.get_width());
+
+    // For all cells
+    for (int y = 0; y < new_grid.get_height(); y++)
+    {
+        for (int x = 0; x < new_grid.get_width(); x++)
+        {
+            new_grid(x, y) = old_grid(y, x);
+        }
+    }
+
+    return new_grid;
+}
 
 /**
  * operator<<(output_stream, grid)

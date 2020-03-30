@@ -12,6 +12,7 @@
 
 // Add the minimal number of includes you need in order to declare the class.
 // #include ...
+#include <cmath>
 #include <vector>
 
 /**
@@ -36,6 +37,10 @@ class Grid {
 
         int get_index(int x, int y) const;
 
+        Grid x_flip(const Grid &old_grid) const;
+        Grid y_flip(const Grid &old_grid) const;
+        Grid swap_coordinates(const Grid &old_grid) const;
+
     public:
         Grid();
         explicit Grid(int square_size);
@@ -58,4 +63,5 @@ class Grid {
 
         Grid crop(int x0, int y0, int x1, int y1) const;
         void merge(Grid other, int x0, int y0, bool alive_only = false);
+        Grid rotate(int rotation) const;
 };

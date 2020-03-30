@@ -848,3 +848,45 @@ Grid Grid::swap_coordinates(const Grid &old_grid) const
  * @return
  *      Returns a reference to the output stream to enable operator chaining.
  */
+std::ostream &operator<<(std::ostream &output_stream, const Grid &grid)
+{
+    // Create (identical) top & bottom borders
+    std::string border;
+
+    border += "+";
+
+    for (int i = 0; i < grid.get_width(); i++)
+    {
+        border += "-";
+    }
+
+    border += "+\n";
+
+    // Print top border
+    output_stream << border;
+
+    // Print grid contents
+    for (int y = 0; y < grid.get_height(); y++)
+    {
+        output_stream << "|";
+
+        for (int x = 0; x < grid.get_width(); x++)
+        {
+            if (grid(x, y) == Cell::ALIVE)
+            {
+                output_stream << "#";
+            }
+            else
+            {
+                output_stream << " ";
+            }
+        }
+
+        output_stream << "|\n";
+    }
+
+    // Print bottom border
+    output_stream << border;
+
+    return output_stream;
+}

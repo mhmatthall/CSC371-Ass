@@ -283,7 +283,10 @@ const Grid &World::get_state() const
  * @param square_size
  *      The new edge size for both the width and height of the grid.
  */
-
+void World::resize(int square_size)
+{
+    resize(square_size, square_size);
+}
 
 /**
  * World::resize(new_width, new_height)
@@ -307,7 +310,11 @@ const Grid &World::get_state() const
  * @param new_height
  *      The new height for the grid.
  */
-
+void World::resize(int new_width, int new_height)
+{
+    current_state.resize(new_width, new_height);
+    next_state = Grid(new_width, new_height);
+}
 
 /**
  * World::count_neighbours(x, y, toroidal)

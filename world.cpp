@@ -23,9 +23,6 @@
  */
 #include "world.h"
 
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
-
 /**
  * World::World()
  *
@@ -37,7 +34,7 @@
  *      World world;
  *
  */
-
+World::World() : World::World(0) {}
 
 /**
  * World::World(square_size)
@@ -58,7 +55,7 @@
  * @param square_size
  *      The edge size to use for the width and height of the world.
  */
-
+World::World(int square_size) : World::World(square_size, square_size) {}
 
 /**
  * World::World(width, height)
@@ -75,7 +72,7 @@
  * @param height
  *      The height of the world.
  */
-
+World::World(int width, int height) : current_state(width, height), next_state(width, height) {}
 
 /**
  * World::World(initial_state)
@@ -96,7 +93,7 @@
  * @param initial_state
  *      The state of the constructed world.
  */
-
+World::World(Grid &initial_state) : current_state(initial_state), next_state(initial_state) {}
 
 /**
  * World::get_width()
@@ -121,7 +118,10 @@
  * @return
  *      The width of the world.
  */
-
+int World::get_width() const
+{
+    return current_state.get_width();
+}
 
 /**
  * World::get_height()
@@ -146,7 +146,10 @@
  * @return
  *      The height of the world.
  */
-
+int World::get_height() const
+{
+    return current_state.get_height();
+}
 
 /**
  * World::get_total_cells()
@@ -171,7 +174,10 @@
  * @return
  *      The number of total cells.
  */
-
+int World::get_total_cells() const
+{
+    return current_state.get_total_cells();
+}
 
 /**
  * World::get_alive_cells()
@@ -196,7 +202,10 @@
  * @return
  *      The number of alive cells.
  */
-
+int World::get_alive_cells() const
+{
+    return current_state.get_alive_cells();
+}
 
 /**
  * World::get_dead_cells()
@@ -221,7 +230,10 @@
  * @return
  *      The number of dead cells.
  */
-
+int World::get_dead_cells() const
+{
+    return current_state.get_dead_cells();
+}
 
 /**
  * World::get_state()
@@ -247,7 +259,10 @@
  * @return
  *      A reference to the current state.
  */
-
+const Grid &World::get_state() const
+{
+    return current_state;
+}
 
 /**
  * World::resize(square_size)

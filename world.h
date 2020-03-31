@@ -10,8 +10,7 @@
  */
 #pragma once
 
-// Add the minimal number of includes you need in order to declare the class.
-// #include ...
+#include "grid.h"
 
 /**
  * Declare the structure of the World class for representing a 2d grid world.
@@ -19,9 +18,22 @@
  * A World holds two equally sized Grid objects for the current state and next state.
  *      - These buffers should be swapped using std::swap after each update step.
  */
-class World {
-    // How to draw an owl:
-    //      Step 1. Draw a circle.
-    //      Step 2. Draw the rest of the owl.
+class World
+{
+    private:
+        Grid current_state;
+        Grid next_state;
 
+    public:
+        World();
+        World(int width, int height);
+        explicit World(int square_size);
+        explicit World(Grid &initial_state);
+
+        int get_width() const;
+        int get_height() const;
+        int get_total_cells() const;
+        int get_alive_cells() const;
+        int get_dead_cells() const;
+        const Grid &get_state() const;
 };

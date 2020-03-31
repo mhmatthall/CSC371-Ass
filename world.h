@@ -21,8 +21,13 @@
 class World
 {
     private:
+        const int UPPER_POPULATION_LIMIT = 3;
+        const int LOWER_POPULATION_LIMIT = 2;
+        
         Grid current_state;
         Grid next_state;
+
+        int count_neighbours(int x, int y, bool toroidal) const;
 
     public:
         World();
@@ -39,4 +44,7 @@ class World
 
         void resize(int square_size);
         void resize(int new_width, int new_height);
+
+        void step(bool toroidal = false);
+        void advance(int steps, bool toroidal = false);
 };

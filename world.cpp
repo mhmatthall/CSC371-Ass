@@ -347,7 +347,76 @@ void World::resize(int new_width, int new_height)
  * @return
  *      Returns the number of alive neighbours.
  */
+int World::count_neighbours(int x, int y, bool toroidal) const
+{
+    int count = 0, new_x = 0, new_y = 0;
 
+    for (int i = y - 1; i <= y + 1; i++)
+    {
+        for (int j = x - 1; j <= x + 1; j++)
+        {
+            if (toroidal)
+            {
+                // Wrap out-of-bounds values back into grid range
+                if (j < 0)
+                {
+                    // x underflow
+                    new_x = j + get_width();
+                }
+                else if (j >= get_width())
+                {
+                    // x overflow
+                    new_x = j - get_width();
+                }
+                else
+                {
+                    // x already in range
+                    new_x = j;
+                }
+
+                if (i < 0)
+                {
+                    // y underflow
+                    new_y = i + get_height();
+                }
+                else if (i >= get_height())
+                {
+                    // y overflow
+                    new_y = i - get_height();
+                }
+                else
+                {
+                    // y already in range
+                    new_y = i;
+                }
+
+                // Check cell value, ignoring centre cell
+                if (!(j == x && i == y) &&
+                    current_state(new_x, new_y) == Cell::ALIVE)
+                {
+                    count++;
+                }
+            }
+            else
+            {
+                // Only check for neighbour cells in range, not centre cell
+                if (j >= 0 &&
+                    j < get_width() &&
+                    i >= 0 &&
+                    i < get_height() &&
+                    !(j == x && i == y))
+                {
+                    // Check cell value only when we know that x, y are in bounds
+                    if (current_state(j, i) == Cell::ALIVE)
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
 
 /**
  * World::step(toroidal)
@@ -369,7 +438,42 @@ void World::resize(int new_width, int new_height)
  *      Optional parameter. If true then the step will consider the grid as a torus, where the left edge
  *      wraps to the right edge and the top to the bottom. Defaults to false.
  */
+void World::step(bool toroidal)
+{
+    int num_neighbours = 0;
 
+    // For all cells
+    for (int y = 0; y < get_height(); y++)
+    {
+        for (int x = 0; x < get_width(); x++)
+        {
+            num_neighbours = count_neighbours(x, y, toroidal);
+
+            if (num_neighbours < LOWER_POPULATION_LIMIT)
+            {
+                // Cell died of underpopulation
+                next_state(x, y) = Cell::DEAD;
+            }
+            else if (num_neighbours > UPPER_POPULATION_LIMIT)
+            {
+                // Cell died of overpopulation
+                next_state(x, y) = Cell::DEAD;
+            }
+            else if (num_neighbours == UPPER_POPULATION_LIMIT)
+            {
+                // Cell made alive through reproduction
+                next_state(x, y) = Cell::ALIVE;
+            }
+            else
+            {
+                next_state(x, y) = current_state(x, y);
+            }
+        }
+    }
+
+    // Swap the grids
+    std::swap(current_state, next_state);
+}
 
 /**
  * World::advance(steps, toroidal)
@@ -384,3 +488,10 @@ void World::resize(int new_width, int new_height)
  *      Optional parameter. If true then the step will consider the grid as a torus, where the left edge
  *      wraps to the right edge and the top to the bottom. Defaults to false.
  */
+void World::advance(int steps, bool toroidal)
+{
+    for (int i = 0; i < steps; i++)
+    {
+        step(toroidal);
+    }
+}

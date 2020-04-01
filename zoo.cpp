@@ -23,9 +23,6 @@
  */
 #include "zoo.h"
 
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
-
 /**
  * Zoo::glider()
  *
@@ -46,7 +43,18 @@
  * @return
  *      Returns a Grid containing a glider.
  */
+Grid Zoo::glider()
+{
+    Grid g(3);
 
+    g(0, 2) = Cell::ALIVE;
+    g(1, 0) = Cell::ALIVE;
+    g(1, 2) = Cell::ALIVE;
+    g(2, 1) = Cell::ALIVE;
+    g(2, 2) = Cell::ALIVE;
+
+    return g;
+}
 
 /**
  * Zoo::r_pentomino()
@@ -68,7 +76,18 @@
  * @return
  *      Returns a Grid containing a r-pentomino.
  */
+Grid Zoo::r_pentomino()
+{
+    Grid g(3);
 
+    g(0, 1) = Cell::ALIVE;
+    g(1, 0) = Cell::ALIVE;
+    g(1, 1) = Cell::ALIVE;
+    g(1, 2) = Cell::ALIVE;
+    g(2, 0) = Cell::ALIVE;
+
+    return g;
+}
 
 /**
  * Zoo::light_weight_spaceship()
@@ -91,7 +110,22 @@
  * @return
  *      Returns a grid containing a light weight spaceship.
  */
+Grid Zoo::light_weight_spaceship()
+{
+    Grid g(5, 4);
 
+    g(0, 1) = Cell::ALIVE;
+    g(0, 2) = Cell::ALIVE;
+    g(0, 3) = Cell::ALIVE;
+    g(1, 0) = Cell::ALIVE;
+    g(1, 3) = Cell::ALIVE;
+    g(2, 3) = Cell::ALIVE;
+    g(3, 3) = Cell::ALIVE;
+    g(4, 0) = Cell::ALIVE;
+    g(4, 2) = Cell::ALIVE;
+
+    return g;
+}
 
 /**
  * Zoo::load_ascii(path)

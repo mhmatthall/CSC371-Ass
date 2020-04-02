@@ -11,6 +11,8 @@
 #pragma once
 
 #include "grid.h"
+#include <iostream>
+#include <fstream>
 
 /**
  * Declare the interface of the Zoo namespace for constructing lifeforms and saving and loading them from file.
@@ -20,5 +22,6 @@ namespace Zoo
     Grid glider();
     Grid r_pentomino();
     Grid light_weight_spaceship();
-    
+
+    Grid load_ascii(const std::string path);
 };

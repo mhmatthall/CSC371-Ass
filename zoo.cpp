@@ -151,7 +151,70 @@ Grid Zoo::light_weight_spaceship()
  *          - Newline characters are not found when expected during parsing.
  *          - The character for a cell is not the ALIVE or DEAD character.
  */
+Grid Zoo::load_ascii(const std::string path)
+{
+    std::ifstream in(path);
 
+    // File exists check
+    if (!in.is_open())
+    {
+        throw std::runtime_error("ERROR: File '" + path + "' not found.");
+    }
+
+    // Load height and width
+    int width = 0;
+    in >> width;
+
+    int height = 0;
+    in >> height;
+
+    // Width/height bounds check
+    if (width < 0 || height < 0)
+    {
+        in.close();
+        throw std::range_error("ERROR: Invalid grid shape in file '" + path + "'.");
+    }
+    
+    // Assemble grid and fill cells
+    Grid new_grid(width, height);
+
+    in.get();   // Ignore first newline character
+
+    char current_char = 0;
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            current_char = in.get();
+
+            if (current_char == '#')
+            {
+                new_grid(x, y) = Cell::ALIVE;
+            }
+            else if (current_char == ' ')
+            {
+                new_grid(x, y) = Cell::DEAD;
+            }
+            else
+            {
+                in.close();
+                throw std::runtime_error("ERROR: File '" + path + "' is invalid.");
+            }
+        }
+
+        // Check that newline is present
+        if (in.get() != '\n')
+        {
+            in.close();
+            throw std::runtime_error("ERROR: File '" + path + "' is invalid.");
+        }
+    }
+
+    in.close();
+
+    return new_grid;
+}
 
 /**
  * Zoo::save_ascii(path, grid)

@@ -244,8 +244,34 @@ Grid Zoo::load_ascii(const std::string path)
  * @throws
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
+void Zoo::save_ascii(const std::string path, const Grid grid)
+{
+    std::ofstream out(path);
 
+    // Check file created successfully
+    if (!out.is_open())
+    {
+        throw std::runtime_error("ERROR: Cannot write to file '" + path + "'.");
+    }
 
+    // Write height/width into first line
+    out << grid.get_width() << " " << grid.get_height() << "\n";
+
+    // Write grid state
+    for (int y = 0; y < grid.get_height(); y++)
+    {
+        for (int x = 0; x < grid.get_width(); x++)
+        {
+            out.put(
+                grid(x, y) == Cell::ALIVE ? '#' : ' '
+            );
+        }
+
+        out.put('\n');
+    }
+
+    out.close();
+}
 /**
  * Zoo::load_binary(path)
  *

@@ -294,7 +294,67 @@ void Zoo::save_ascii(const std::string path, const Grid grid)
  *          - The file cannot be opened.
  *          - The file ends unexpectedly.
  */
+Grid Zoo::load_binary(const std::string path)
+{
+    std::ifstream in(path, std::ios::binary);
 
+    // Check file exists
+    if (!in.is_open())
+    {
+        throw std::runtime_error("ERROR: File '" + path + "' not found.");
+    }
+
+    // Read width and height
+    int width = 0;
+    in.read((char *)&width, sizeof(int));
+
+    int height = 0;
+    in.read((char *)&height, sizeof(int));
+
+    // Check width/height within bounds
+    if (width < 0 || height < 0)
+    {
+        in.close();
+        throw std::range_error("ERROR: Invalid grid shape in file '" + path + "'.");
+    }
+
+    // Read x bytes of cell data into buffer
+    int read_size = floor((width * height) / 8); // Number of bytes to read (inc. padding)
+    char buffer[read_size];
+
+    in.read(buffer, read_size + 1);
+
+    // Check if file ended unexpectedly
+    if (in.fail())
+    {
+        in.close();
+        throw std::runtime_error("ERROR: File '" + path + "' is invalid.");
+    }
+
+    in.close(); // End of file reading
+
+    // Assemble and fill grid
+    Grid new_grid(width, height);
+    int c_index = 0;
+    bool current_bit = false;
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            // Get absolute position of the cell in the grid: [0, w * h)
+            c_index = x + (y * width);
+
+            // Retrieve jth bit from the ith byte in the buffer
+            current_bit = (buffer[c_index / 8] >> c_index % 8) & 1U;
+
+            // Set cell as appropriate
+            new_grid(x, y) = current_bit == true ? Cell::ALIVE : Cell::DEAD;
+        }
+    }
+
+    return new_grid;
+}
 
 /**
  * Zoo::save_binary(path, grid)

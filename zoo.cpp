@@ -319,8 +319,8 @@ Grid Zoo::load_binary(const std::string path)
     }
 
     // Read x bytes of cell data into buffer
-    int read_size = floor((width * height) / 8); // Number of bytes to read (inc. padding)
-    char buffer[read_size];
+    int read_size = ceil((width * height) / 8); // Number of bytes to read (inc. padding)
+    char *buffer = new char[read_size];
 
     in.read(buffer, read_size + 1);
 
@@ -345,13 +345,15 @@ Grid Zoo::load_binary(const std::string path)
             // Get absolute position of the cell in the grid: [0, w * h)
             c_index = x + (y * width);
 
-            // Retrieve jth bit from the ith byte in the buffer
+            // Retrieve jth bit (ind % 8) from the ith byte (ind / 8) in the buffer
             current_bit = (buffer[c_index / 8] >> c_index % 8) & 1U;
 
             // Set cell as appropriate
             new_grid(x, y) = current_bit == true ? Cell::ALIVE : Cell::DEAD;
         }
     }
+
+    delete [] buffer;
 
     return new_grid;
 }

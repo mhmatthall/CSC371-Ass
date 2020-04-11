@@ -19,7 +19,7 @@
  *              - a 0 bit should be considered Cell::DEAD, a 1 bit should be considered Cell::ALIVE.
  *
  * @author 961500
- * @date March, 2020
+ * @date April, 2020
  */
 #include "zoo.h"
 
@@ -155,33 +155,34 @@ Grid Zoo::load_ascii(const std::string path)
 {
     std::ifstream in(path);
 
-    // File exists check
+    // Check that file exists
     if (!in.is_open())
     {
         throw std::runtime_error("ERROR: File '" + path + "' not found.");
     }
 
-    // Load height and width
+    // Read width and height
     int width = 0;
     in >> width;
 
     int height = 0;
     in >> height;
 
-    // Width/height bounds check
+    // Check that width/height within bounds
     if (width < 0 || height < 0)
     {
         in.close();
         throw std::range_error("ERROR: Invalid grid shape in file '" + path + "'.");
     }
-    
+
     // Assemble grid and fill cells
     Grid new_grid(width, height);
 
-    in.get();   // Ignore first newline character
+    in.get(); // Ignore first newline character
 
     char current_char = 0;
 
+    // For all grid cells
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -203,7 +204,7 @@ Grid Zoo::load_ascii(const std::string path)
             }
         }
 
-        // Check that newline is present
+        // Ensure expected newline is present
         if (in.get() != '\n')
         {
             in.close();
@@ -254,17 +255,16 @@ void Zoo::save_ascii(const std::string path, const Grid grid)
         throw std::runtime_error("ERROR: Cannot write to file '" + path + "'.");
     }
 
-    // Write height/width into first line
+    // Write height/width header into first line
     out << grid.get_width() << " " << grid.get_height() << "\n";
 
-    // Write grid state
+    // For all grid cells, write state
     for (int y = 0; y < grid.get_height(); y++)
     {
         for (int x = 0; x < grid.get_width(); x++)
         {
             out.put(
-                grid(x, y) == Cell::ALIVE ? '#' : ' '
-            );
+                grid(x, y) == Cell::ALIVE ? '#' : ' ');
         }
 
         out.put('\n');
@@ -272,6 +272,7 @@ void Zoo::save_ascii(const std::string path, const Grid grid)
 
     out.close();
 }
+
 /**
  * Zoo::load_binary(path)
  *
@@ -333,8 +334,9 @@ Grid Zoo::load_binary(const std::string path)
 
     in.close(); // End of file reading
 
-    // Assemble and fill grid
+    // Assemble grid cell-by-cell
     Grid new_grid(width, height);
+
     int c_index = 0;
     bool current_bit = false;
 
@@ -353,7 +355,7 @@ Grid Zoo::load_binary(const std::string path)
         }
     }
 
-    delete [] buffer;
+    delete[] buffer;
 
     return new_grid;
 }
@@ -409,7 +411,7 @@ void Zoo::save_binary(const std::string path, const Grid grid)
 
     int c_index = 0;
 
-    // For all grid cells
+    // For all grid cells, save state
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -426,7 +428,7 @@ void Zoo::save_binary(const std::string path, const Grid grid)
         }
     }
 
-    // Write to file
+    // Write buffer to file
     out.write(buffer, read_size + 1);
 
     // Clean-up before exit

@@ -384,4 +384,50 @@ Grid Zoo::load_binary(const std::string path)
  * @throws
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
+void Zoo::save_binary(const std::string path, const Grid grid)
+{
+    std::ofstream out(path, std::ios::binary);
 
+    // Check file was created successfully
+    if (!out.is_open())
+    {
+        throw std::runtime_error("ERROR: Cannot write to file '" + path + "'.");
+    }
+
+    // Write width and height
+    int width = grid.get_width();
+    out.write(reinterpret_cast<char *>(&width), sizeof(width));
+
+    int height = grid.get_height();
+    out.write(reinterpret_cast<char *>(&height), sizeof(height));
+
+    // Write cell data into char array buffer
+    int read_size = ceil(width * height / 8); // Number of bytes to read (inc. padding)
+    char *buffer = new char[read_size];
+
+    int c_index = 0;
+
+    // For all grid cells
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            // Grid init with all cells DEAD, so only write those ALIVE
+            if (grid(x, y) == Cell::ALIVE)
+            {
+                // Get absolute position of the cell in the grid: [0, w * h)
+                c_index = x + (y * width);
+
+                // Set bit to true
+                buffer[c_index / 8] |= 1U << (c_index % 8);
+            }
+        }
+    }
+
+    // Write to file
+    out.write(buffer, read_size + 1);
+
+    // Clean-up before exit
+    delete[] buffer;
+    out.close();
+}

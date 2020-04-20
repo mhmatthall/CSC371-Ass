@@ -409,7 +409,15 @@ int Grid::get_index(int x, int y) const
  */
 Cell Grid::get(int x, int y) const
 {
-    return operator()(x, y);
+    // Check x/y within bounds
+    if (x >= width || x < 0 || y >= height || y < 0)
+    {
+        throw std::out_of_range("ERROR: Requested cell coordinate is out of bounds.");
+    }
+    else
+    {
+        return operator()(x, y);
+    }
 }
 
 /**
@@ -440,8 +448,17 @@ Cell Grid::get(int x, int y) const
  */
 void Grid::set(int x, int y, Cell value)
 {
-    Cell &current_cell = operator()(x, y);
-    current_cell = value;
+    // Check x/y within bounds
+    if (x >= width || x < 0 || y >= height || y < 0)
+    {
+        throw std::out_of_range("ERROR: Requested cell coordinate is out of bounds.");
+    }
+    else
+    {
+        // Dereference cell and apply value
+        Cell &current_cell = operator()(x, y);
+        current_cell = value;
+    }
 }
 
 /**
@@ -481,7 +498,15 @@ void Grid::set(int x, int y, Cell value)
  */
 Cell &Grid::operator()(int x, int y)
 {
-    return cells[get_index(x, y)];
+    // Check x/y within bounds
+    if (x >= width || x < 0 || y >= height || y < 0)
+    {
+        throw std::out_of_range("ERROR: Requested cell coordinate is out of bounds.");
+    }
+    else
+    {
+        return cells[get_index(x, y)];
+    }
 }
 
 /**
@@ -516,7 +541,15 @@ Cell &Grid::operator()(int x, int y)
  */
 const Cell &Grid::operator()(int x, int y) const
 {
-    return cells[get_index(x, y)];
+    // Check x/y within bounds
+    if (x >= width || x < 0 || y >= height || y < 0)
+    {
+        throw std::out_of_range("ERROR: Requested cell coordinate is out of bounds.");
+    }
+    else
+    {
+        return cells[get_index(x, y)];
+    }
 }
 
 /**
@@ -555,19 +588,28 @@ const Cell &Grid::operator()(int x, int y) const
  */
 Grid Grid::crop(int x0, int y0, int x1, int y1) const
 {
-    // Construct new grid of size dx * dy
-    Grid new_grid(x1 - x0, y1 - y0);
-
-    // Iterate through new grid and fill values
-    for (int y = 0; y < new_grid.get_height(); y++)
+    // Check x0, y0 within bounds and x1, y1 not negative
+    if (x0 >= width || x0 < 0 || y0 >= height || y0 < 0 || x1 < 0 || y1 < 0)
     {
-        for (int x = 0; x < new_grid.get_width(); x++)
+        throw std::out_of_range("ERROR: Attempted resize is out of bounds.");
+    }
+    else
+    {
+        // Construct new grid of size dx * dy
+        Grid new_grid(x1 - x0, y1 - y0);
+
+        // Iterate through new grid and fill values
+        for (int y = 0; y < new_grid.get_height(); y++)
         {
-            new_grid.set(x, y, get(x + x0, y + y0));
+            for (int x = 0; x < new_grid.get_width(); x++)
+            {
+                new_grid.set(x, y, get(x + x0, y + y0));
+            }
         }
     }
 
-    return new_grid;
+        return new_grid;
+    }
 }
 
 /**
@@ -609,23 +651,30 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) const
  */
 void Grid::merge(Grid &other, int x0, int y0, bool alive_only)
 {
-    // Iterate through new grid
-    for (int y = 0; y < other.get_height(); y++)
+    if (width < x0 + other.get_width() || height < y0 + other.get_height())
     {
-        for (int x = 0; x < other.get_width(); x++)
+        throw std::invalid_argument("ERROR: Merging grid too large.");
+    }
+    else
+    {
+        // Iterate through new grid
+        for (int y = 0; y < other.get_height(); y++)
         {
-            // Check merge condition
-            if (!alive_only)
+            for (int x = 0; x < other.get_width(); x++)
             {
-                // Transfer cell unconditionally
-                set(x + x0, y + y0, other.get(x, y));
-            }
-            else
-            {
-                if (get(x + x0, y + y0) == Cell::DEAD)
+                // Check merge condition
+                if (!alive_only)
                 {
-                    // Transfer cell only if dead
+                    // Transfer cell unconditionally
                     set(x + x0, y + y0, other.get(x, y));
+                }
+                else
+                {
+                    if (get(x + x0, y + y0) == Cell::DEAD)
+                    {
+                        // Transfer cell only if dead
+                        set(x + x0, y + y0, other.get(x, y));
+                    }
                 }
             }
         }

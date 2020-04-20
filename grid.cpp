@@ -307,7 +307,7 @@ void Grid::resize(int new_width, int new_height)
         }
         else
         {
-            // When changing rows
+            // When adding or removing rows
             if (new_height != height)
             {
                 cells.resize(new_width * new_height, Cell::DEAD);
@@ -609,7 +609,6 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) const
                 new_grid.set(x, y, get(x + x0, y + y0));
             }
         }
-    }
 
         return new_grid;
     }
@@ -652,7 +651,7 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) const
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
-void Grid::merge(Grid &other, int x0, int y0, bool alive_only)
+void Grid::merge(const Grid &other, int x0, int y0, bool alive_only)
 {
     if (width < x0 + other.get_width() || height < y0 + other.get_height())
     {

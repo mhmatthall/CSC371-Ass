@@ -1,0 +1,25 @@
+# CSC371 Advanced OOP
+## Coursework: Conway's Game of Life
+Submitted by 961500 on 20/04/2020
+
+- All tests passed
+- No compiler messages
+- `game_of_life` and `game_of_life_simple` run as intended
+- Correct allocation of memory verified with Valgrind
+
+There are, however, certain inconsistencies in some scenarios
+- **Test 16** for `Zoo::save_binary` sometimes fails:
+    * on the lab machines
+    * on my machine (gcc) when running `test_all_monolithic`
+    
+    It does not fail when tested individually or with `test_all` on my machine. I have narrowed the issue down to how the character array `buffer` is storing bits, which for some reason gets randomly corrupted *only sometimes*. I'm sure you will be able to spot the issue, and I would appreciate knowing where I went wrong!
+    
+    In my submission, I just wrote what I believe to be correct without resorting to `std::bitset`; here are some of the things I have tried:
+    * changing `buffer` to any combination of (un)signed pointer/value arrays of various types and sizes
+    * all sorts of (C-style/reinterpret/static) casting in the `write` statement
+    * using `memcpy` to move bytes into `buffer`
+    * changing the bit setting method
+    * adding the null character '`\0`' to the end of `buffer`
+    * making the statements more verbose, such as explicitly setting 0 for DEAD cells
+    * restructuring the nested `if` loops
+    * changing the `ofstream` file mode

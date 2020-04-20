@@ -313,7 +313,7 @@ void World::resize(int square_size)
 void World::resize(int new_width, int new_height)
 {
     current_state.resize(new_width, new_height);
-    next_state = Grid(new_width, new_height);
+    next_state = std::move(Grid(new_width, new_height));
 }
 
 /**
@@ -415,6 +415,7 @@ int World::count_neighbours(int x, int y, bool toroidal) const
             }
         }
     }
+
     return count;
 }
 

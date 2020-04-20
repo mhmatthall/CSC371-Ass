@@ -332,6 +332,7 @@ Grid Zoo::load_binary(const std::string path)
     // Check if file ended unexpectedly
     if (in.fail())
     {
+        delete[] buffer;
         in.close();
         throw std::runtime_error("ERROR: File '" + path + "' is invalid.");
     }
@@ -411,7 +412,7 @@ void Zoo::save_binary(const std::string path, const Grid grid)
 
     // Write cell data into char array buffer
     int read_size = ceil(width * height / 8); // Number of bytes to read (inc. padding)
-    char *buffer = new char[read_size];
+    char *buffer = new char[read_size + 1];
 
     int c_index = 0;
 
@@ -420,14 +421,14 @@ void Zoo::save_binary(const std::string path, const Grid grid)
     {
         for (int x = 0; x < width; x++)
         {
-            // Grid init with all cells DEAD, so only write those ALIVE
+            // Grid initialises with all cells DEAD, so only write those ALIVE
             if (grid(x, y) == Cell::ALIVE)
             {
                 // Get absolute position of the cell in the grid: [0, w * h)
                 c_index = x + (y * width);
 
                 // Set bit to true
-                buffer[c_index / 8] |= 1U << (c_index % 8);
+                buffer[c_index / 8] = (buffer[c_index / 8] & ~(1UL << c_index % 8)) | (1UL << c_index % 8);
             }
         }
     }
@@ -437,5 +438,7 @@ void Zoo::save_binary(const std::string path, const Grid grid)
 
     // Clean-up before exit
     delete[] buffer;
+    buffer = nullptr;
+
     out.close();
 }

@@ -21,6 +21,10 @@
  * @author 961500
  * @date April, 2020
  */
+#include <cmath>
+#include <fstream>
+#include <stdexcept>
+
 #include "zoo.h"
 
 /**

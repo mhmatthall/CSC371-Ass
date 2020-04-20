@@ -9,8 +9,11 @@
  * You are encouraged to use STL container types as an underlying storage mechanism for the grid cells.
  *
  * @author 961500
- * @date March, 2020
+ * @date April, 2020
  */
+#include <cmath>
+#include <stdexcept>
+
 #include "grid.h"
 
 /**
